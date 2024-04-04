@@ -1,0 +1,42 @@
+totalEarnings = 0
+regularHoursRate = 100
+overtimeRate1 = 1.2 * regularHoursRate
+overtimeRate2 = 1.15 * regularHoursRate
+overtimeRate3 = 1.25 * regularHoursRate
+overtimeRate4 = 1.3 * regularHoursRate
+totalHours = 0
+
+for each day in the pay period:
+    workStart = getWorkStartTime()
+    workEnd = getWorkEndTime()
+
+    // Calculate regular hours
+    if workStart < 6:00 AM:
+        totalEarnings += (min(6:00 AM, workEnd) - workStart) * regularHoursRate
+        totalHours += min(6:00 AM, workEnd) - workStart
+
+    // Calculate overnight hours (25% additional rate)
+    if workStart < 2:00 AM and workEnd > 2:00 AM:
+        totalEarnings += (min(2:00 AM, workEnd) - max(workStart, 2:00 AM)) * overtimeRate3
+        totalHours += min(2:00 AM, workEnd) - max(workStart, 2:00 AM)
+
+    // Calculate regular hours
+    if workEnd > 6:00 AM:
+        totalEarnings += (workEnd - max(6:00 AM, workStart)) * regularHoursRate
+        totalHours += workEnd - max(6:00 AM, workStart)
+
+    // Handle break time
+    if totalHours >= 3.5:
+        totalHours -= 0.5  // Subtract 30 minutes break time
+
+// Calculate overtime hours
+overtimeHours = max(totalHours - 9 * number_of_days_worked, 0)
+
+// Calculate overtime earnings
+if overtimeHours <= 50:
+    totalEarnings += overtimeHours * overtimeRate1
+else:
+    totalEarnings += 50 * overtimeRate1 + (overtimeHours - 50) * overtimeRate2
+
+// Output totalEarnings
+print("Total Earnings: $" + totalEarnings)
